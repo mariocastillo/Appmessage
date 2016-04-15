@@ -26,19 +26,20 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends ListActivity {
     ListView listv;
+    Intent ia;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent ia= getIntent();
+        ia= getIntent();
         String contacto= (String) ia.getSerializableExtra("UserId");
 
 
         try {
 
-            ArrayList<String> result= new myQueryTask().execute(contacto).get();
+            ArrayList<Integer> result= new myQueryTask().execute("contacts",contacto).get();
             
-            ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,R.layout.rowlayout,result);
+            ArrayAdapter<Integer> adapter=new ArrayAdapter<Integer>(this,R.layout.rowlayout,result);
             this.setListAdapter(adapter);
 
         } catch (InterruptedException e) {
@@ -82,10 +83,10 @@ public class MainActivity extends ListActivity {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         // ListView Clicked item value
-        Intent ii= getIntent();
-        String contacto= (String) ii.getSerializableExtra("UserId");
-        String  itemValue    = (String) l.getItemAtPosition(position);
-        UsersMessage usersid= new UsersMessage(contacto,itemValue,"");
+        ia=getIntent();
+        String contacto= (String) ia.getSerializableExtra("UserId");
+        int  itemValue    = (int) l.getItemAtPosition(position);
+        UsersMessage usersid= new UsersMessage(Integer.parseInt(contacto),itemValue, "");
         Intent i= new Intent(getApplicationContext(),MessagesActivity.class);
         i.putExtra("UsersIds", usersid);
         startActivity(i);

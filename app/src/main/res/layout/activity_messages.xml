@@ -23,23 +23,6 @@
 
     <include layout="@layout/content_messages" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom">
-        <ImageButton
-            android:id="@+id/button_send"
-            android:src="@android:drawable/ic_menu_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="finalizar"
-            android:layout_alignParentRight="true"/>
-        <EditText
-            android:id="@+id/mensaje"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/button_send"
-            android:layout_toLeftOf="@id/button_send"/>
-    </RelativeLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

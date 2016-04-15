@@ -6,37 +6,37 @@ import java.io.Serializable;
  * Created by mario on 11/04/2016.
  */
 public class UsersMessage implements Serializable {
-    String from;
-    String to;
-    String Message;
+    int from;
+    int to;
+    String text;
 
-    public UsersMessage(String from,String to,String Message){
+    public UsersMessage(int from,int to,String Message){
         this.from=from;
         this.to=to;
-        this.Message=Message;
+        this.text=Message;
     }
 
-    public void setFrom(String from) {
+    public void setFrom(int from) {
         this.from = from;
     }
 
-    public void setTo(String to) {
+    public void setTo(int to) {
         this.to = to;
     }
 
-    public String getFrom() {
+    public int getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public int getTo() {
         return to;
     }
 
-    public void setMessage(String message) {
-        Message = message;
+    public void setText(String text) {
+        this.text = text;
     }
 
-    public String getMessage() {
-        return Message;
+    public String getText() {
+        return text;
     }
 }

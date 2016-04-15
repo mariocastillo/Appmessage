@@ -18,17 +18,17 @@ import java.util.List;
 /**
  * Created by mario on 11/03/2016.
  */
-public class myQueryTask extends AsyncTask<String,Void,ArrayList<String>> {
+public class myQueryTask extends AsyncTask<String,Void,ArrayList<Integer>> {
 
     @Override
-    public ArrayList<String> doInBackground(String... params) {
+    public ArrayList<Integer> doInBackground(String... params) {
         // Create a new RestTemplate instance
-        ArrayList<String> listaa=new ArrayList<String>();
+        ArrayList<Integer> listaa=new ArrayList<Integer>();
         String url1="https://ajax.googleapis.com/ajax/" +
                 "services/search/web?v=1.0&q={query}";
         //String url="https://global.api.pvp.net/api/lol/static-data/lan/v1.2/champion?champData=all&api_key=404e03a9-b38e-4f0d-a6aa-acf04022575e";
         //String url="https://blazing-heat-1733.firebaseio.com/";
-        String url2="http://10.0.2.2:8191/rest/contacts/{contact}";
+        String url2="http://10.0.2.2:8191/rest/{contacts}/{contact}";
         RestTemplate restTemplate = new RestTemplate();
 
         // Add the String message converter
@@ -46,7 +46,7 @@ public class myQueryTask extends AsyncTask<String,Void,ArrayList<String>> {
             e.printStackTrace();
         }
         for (ContactInfo s:qres) {
-            listaa.add(s.getUserName());
+            listaa.add(s.getUserId());
         }
 
 
