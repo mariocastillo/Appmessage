@@ -8,16 +8,10 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:layout_above="@+id/button_send">
-        <LinearLayout
-            android:id="@+id/mensajes_enviados"
+        <ListView
+            android:id="@+id/mensajesdesp"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/mensaje_prueba"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+            android:layout_height="wrap_content"></ListView>
     </ScrollView>
     <!-- TODO: Update blank fragment layout -->
     <ImageButton

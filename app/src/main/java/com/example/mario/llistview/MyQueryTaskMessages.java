@@ -1,11 +1,8 @@
 package com.example.mario.llistview;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -13,19 +10,18 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by mario on 11/03/2016.
+ * Created by mario on 16/04/2016.
  */
-public class myQueryTask extends AsyncTask<String,Void,ArrayList<Integer>> {
+public class MyQueryTaskMessages extends AsyncTask<String,Void,ArrayList<String>> {
 
     @Override
-    public ArrayList<Integer> doInBackground(String... params) {
+    protected ArrayList<String> doInBackground(String... params) {
         // Create a new RestTemplate instance
-        ArrayList<Integer> listaa=new ArrayList<Integer>();
-        String url="http://10.0.2.2:8191/rest/{contacts}/{contact}";
+        ArrayList<String> listaa=new ArrayList<String>();
+        String url="http://10.0.2.2:8191/rest/{Messages}/{contact1}/{contact2}";
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -38,14 +34,14 @@ public class myQueryTask extends AsyncTask<String,Void,ArrayList<Integer>> {
         String result = restTemplate.getForObject(url, String.class,params);
 
         ObjectMapper mapper = new ObjectMapper();
-        List<ContactInfo> qres= null;
+        List<Message> qres= null;
         try {
-            qres = mapper.readValue(result,mapper.getTypeFactory().constructCollectionType(List.class, ContactInfo.class));
+            qres = mapper.readValue(result,mapper.getTypeFactory().constructCollectionType(List.class, Message.class));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (ContactInfo s:qres) {
-            listaa.add(s.getUserId());
+        for (Message s:qres) {
+            listaa.add(s.getText());
         }
 
         return listaa ;

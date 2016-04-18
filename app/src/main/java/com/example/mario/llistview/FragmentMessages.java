@@ -1,6 +1,7 @@
 package com.example.mario.llistview;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,18 +13,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -86,32 +97,59 @@ public class FragmentMessages extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final ArrayList<String> allmessages = new ArrayList<String>();
+        final String[] values = new String[] { "Android List View",
+                "Adapter implementation",
+                "Simple List View In Android",
+                "Create List View Android",
+                "Android Example",
+                "List View Source Code",
+                "List View Array Adapter",
+                "Android Example List View"
+        };
+
+        final List<UsersMessage> mensajes=new ArrayList<UsersMessage>();
         View v=inflater.inflate(R.layout.fragment_fragment_messages, container, false);
         final Activity a =getActivity();
         Intent i=a.getIntent();
         final UsersMessage uIds= (UsersMessage) i.getSerializableExtra("UsersIds");
 
-
-
-        final String file = "from"+String.valueOf(uIds.getFrom())+"to"+String.valueOf(uIds.getTo());
+        String primero = String.valueOf(uIds.getFrom());
+        String segundo = String.valueOf(uIds.getTo());
+        if (uIds.getFrom()>uIds.getTo())
+        {
+            primero=String.valueOf(uIds.getTo());
+            segundo=String.valueOf(uIds.getFrom());
+        }
+        final String file = primero+segundo;
         final EditText mens= (EditText) v.findViewById(R.id.mensaje);
-        final TextView tx= (TextView) v.findViewById(R.id.mensaje_prueba);
+
+        final ListView lnmensajes=(ListView)v.findViewById(R.id.mensajesdesp);
+
+
+
         ImageButton bs= (ImageButton) v.findViewById(R.id.button_send);
         ImageButton br= (ImageButton) v.findViewById(R.id.recargar);
         bs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mensaje=mensaje+mens.getText().toString()+"/n";
+                mensaje="From"+String.valueOf(uIds.getFrom())+":" + mens.getText().toString();
+                uIds.setText(mensaje);
+                new MyQueryTaskpost(uIds).execute();
+                mensajes.add(uIds);
+
+
+                allmessages.add(mensaje);
+
+                FileOutputStream outputStream;
+
                 try {
-                    uIds.setText(mensaje);
-                    new MyQueryTaskpost(uIds).execute();
-                    FileOutputStream fOut = a.openFileOutput(file,Context.MODE_PRIVATE);
-                    ObjectOutputStream oOut=new ObjectOutputStream(fOut);
-                    oOut.writeObject(uIds);
-                    oOut.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                    outputStream = a.openFileOutput(file, Context.MODE_PRIVATE);
+                    outputStream.write(mensaje.getBytes());
+                    outputStream.close();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.rowlayout, R.id.textlistview,allmessages);
+                    lnmensajes.setAdapter(adapter);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -120,23 +158,50 @@ public class FragmentMessages extends Fragment {
         br.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 try {
-                    FileInputStream fin = a.openFileInput(file);
-                    ObjectInputStream iInt= new ObjectInputStream(fin);
-                    UsersMessage c= (UsersMessage) iInt.readObject();
-                    //Log.d("MyApp","from: "+String.valueOf(c.getFrom())+" to: "+String.valueOf(c.getTo())+" text: "+c.getText());
+                    ArrayList<String> result =new MyQueryTaskMessages().execute("messages", String.valueOf(uIds.getTo()), String.valueOf(uIds.getFrom())).get();
+                    for (String k:result) {
+                        allmessages.add(k);
+                    }
+
+                    FileInputStream fin =a.openFileInput(file);
+                    int c;
+                    while( (c = fin.read()) != -1){
+
+                        if ( (char)c!='\n'){
+                            temp = temp + Character.toString((char)c);
+
+                        }
+                        if ((char)c=='\n'){
+                            FileOutputStream outputStream = a.openFileOutput(file, Context.MODE_PRIVATE);
+                            outputStream.write(temp.getBytes());
+                            outputStream.close();
+                            allmessages.add(temp);
+                            temp="";
+                        }
+
+                    }
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.rowlayout, R.id.textlistview,allmessages);
+                    lnmensajes.setAdapter(adapter);
 
 
-                    //temp = temp + String.valueOf(c.getFrom())+String.valueOf(c.getTo())+c.getText();
+//string temp contains all the data of the file.
+                    fin.close();
 
-                    tx.setText("from: "+String.valueOf(c.getFrom())+" to: "+String.valueOf(c.getTo())+" text: "+c.getText());
-                }catch (FileNotFoundException e) {
+
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                 }
+
+
             }
         });
         return v;
