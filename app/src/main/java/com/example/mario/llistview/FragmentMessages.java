@@ -140,7 +140,6 @@ public class FragmentMessages extends Fragment {
 
 
                 allmessages.add(mensaje);
-
                 FileOutputStream outputStream;
 
                 try {
